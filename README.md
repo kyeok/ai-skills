@@ -6,7 +6,7 @@ Evidence-based AI skills for Claude Code and Codex CLI.
 
 | Skill | Command | Description |
 |-------|---------|-------------|
-| [expert-panel](skills/expert-panel/) | `/전문가소환` | Evidence-based expert panel discussion (EBP approach) |
+| [expert-panel](skills/expert-panel/) | `/전문가소환` | Evidence-based expert panel discussion (EBP approach) — by [안상완](https://github.com/itsbluetic/expert-panel-by-ebp) |
 | [prompt-forge](skills/prompt-forge/) | `/prompt-forge` | Expert prompt engineer using 7-step pipeline |
 
 ## Installation

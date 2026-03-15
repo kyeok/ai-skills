@@ -2,10 +2,11 @@
 name: expert-panel
 description: "Evidence-based expert panel discussion. Summons 6 domain experts grounded in scientific evidence to analyze any topic. Uses EBP (Evidence-Based Practice) approach: science mapping, evidence landscape, context collection, panel debate with evidence-level tags, implementation design, and practice experiments. Use when you need rigorous, multi-perspective analysis on research, leadership, coaching, decision-making, or policy topics. Korean: /전문가소환"
 metadata:
-  author: harleykim
+  author: 안상완 (itsbluetic)
   version: "2.0"
   language: ko
   aliases: ["전문가소환"]
+  source: https://github.com/itsbluetic/expert-panel-by-ebp
 ---
 
 # /전문가소환 - 근거 기반 전문가 패널 `v2.0`
