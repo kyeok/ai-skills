@@ -1,20 +1,20 @@
 ---
 name: prompt-forge
-description: "Expert prompt engineer that generates professional-grade prompts optimized for AI. Uses a 7-step pipeline: Role, Concept Clarification, Research Question, Evidence Hierarchy, Analytical Dimensions, Structured Output, Guardrails. Based on MIT research prompting, policy analysis prompting, and clinical evidence synthesis (PICO/GRADE). Use for research, leadership, coaching, decision-making, and policy analysis prompts."
+description: "Expert prompt engineer that generates professional-grade prompts optimized for AI. Uses an 8-step pipeline: Role, Concept Clarification, Research Question, Evidence & Citation, Analytical Dimensions, Structured Output, Guardrails, Verification. Based on MIT research prompting, policy analysis prompting, and clinical evidence synthesis (PICO/GRADE). Use for research, leadership, coaching, decision-making, and policy analysis prompts."
 metadata:
   author: harleykim
-  version: "1.0"
+  version: "1.1"
   language: ko
   inspired_by: 고주형
 ---
 
-# /prompt-forge - Expert Prompt Engineer `v1.0`
+# /prompt-forge - Expert Prompt Engineer `v1.1`
 
 $ARGUMENTS
 
 사용자의 주제/목적을 받아 **AI로부터 최고 수준의 응답을 끌어낼 수 있는 전문가급 프롬프트**를 생성합니다.
 
-> 설계 기반: MIT Research Prompting (cognitive scaffolding + prompt templates), Policy Analysis Prompting (multi-stakeholder deliberation + evidence hierarchy), Clinical Evidence Synthesis Prompting (PICO/PRISMA pipeline + GRADE framework)
+> 설계 기반: MIT Research Prompting (cognitive scaffolding + prompt templates), Policy Analysis Prompting (multi-stakeholder deliberation + evidence hierarchy), Clinical Evidence Synthesis Prompting (PICO/PRISMA pipeline + GRADE framework), OpenAI Prompt Guidance (output contracts + verification loops + grounding rules)
 
 ## 사용법
 
@@ -103,16 +103,25 @@ $ARGUMENTS
 - 비질문 (Non-questions): 명시적으로 답하지 않아도 되는 것
 ```
 
-### 4단계: Evidence Hierarchy (근거 위계 설정)
+연구 도메인의 경우, **3-Pass 실행 모드**를 프롬프트에 내장한다:
+```
+이 질문에 답할 때 다음 3단계를 순서대로 실행하라:
+1. Plan: 주 질문을 답하기 위해 먼저 조사해야 할 하위 질문 3-6개를 나열하라.
+2. Retrieve: 각 하위 질문에 대해 알고 있는 근거를 수집하고, 1-2개의 후속 질문(second-order leads)을 추적하라.
+3. Synthesize: 하위 질문 간 모순을 해결하고, 근거 수준 태그를 붙여 최종 답변을 작성하라.
+추가 검색이 결론을 바꿀 가능성이 낮아질 때까지 멈추지 말라.
+```
 
-응답에서 **근거의 질을 구분하도록** 프롬프트에 내장한다.
+### 4단계: Evidence & Citation (근거 위계 및 인용 규칙)
+
+응답에서 **근거의 질을 구분하고, 인용 행동을 통제하도록** 프롬프트에 내장한다.
 
 설계 원칙:
 - GRADE 프레임워크 차용: 근거의 확실성을 등급화 (High/Moderate/Low/Very Low)
 - Policy analysis: 경험적 근거 vs 이론적 주장 vs 규범적 주장 구분 필수
 - 모든 주장에 근거 수준 태그를 요구하면 환각(hallucination)이 감소
 
-프롬프트에 내장할 구조:
+프롬프트에 내장할 근거 위계 구조:
 ```
 근거 수준을 다음과 같이 구분하라:
 - [Strong] 메타분석, 체계적 리뷰, 복수의 재현된 연구
@@ -124,6 +133,17 @@ $ARGUMENTS
 근거가 약하거나 없으면 솔직하게 "근거 부족"이라고 말하라.
 추론과 사실을 구분하라.
 통념이지만 근거가 약한 것을 별도로 플래그하라.
+```
+
+프롬프트에 내장할 인용 규칙:
+```
+인용 및 출처 규칙:
+- 인용은 특정 주장에 직접 붙여라. 문단 끝에 일괄 나열하지 말라.
+- 출처를 날조하지 말라. 정확한 저자, 연도, 제목을 모르면 "구체적 출처를 특정할 수 없으나..."라고 밝혀라.
+- URL, DOI, 논문 ID를 지어내지 말라.
+- 출처 간 충돌이 있으면 양쪽 모두를 귀인(attribution)하여 명시하라: "A는 X를 주장하는 반면, B는 Y를 주장한다."
+- 직접 인용과 의역을 구분하라.
+- 추론(inference)은 "이로부터 추론하면..."으로 시작하여 사실과 명확히 분리하라.
 ```
 
 ### 5단계: Analytical Dimensions (분석 차원 설계)
@@ -151,6 +171,7 @@ $ARGUMENTS
 - 각 차원에서 구체적으로 분석할 질문
 - 교차 분석: 차원 간 상호작용이나 긴장 관계
 - 의도적 반론(steel-man counterargument) 요구
+- Depth nudge: "첫 번째 그럴듯한 답에서 멈추지 말라. 2차 효과, 엣지 케이스, 누락된 제약 조건을 탐색하라."
 ```
 
 ### 6단계: Structured Output (출력 구조 설계)
@@ -161,6 +182,7 @@ AI의 응답 **형식과 구조**를 정밀하게 설계한다.
 - MIT: 출력 형식을 명시하면 응답 품질이 ~50% 향상
 - Clinical evidence: PRISMA 정렬 파이프라인처럼 **단계별 구조화된 출력**
 - 좋은 출력 예시와 나쁜 출력 예시를 주면 calibration anchor 역할
+- Output Contract: 필수 섹션을 **계약(contract)**으로 명시하여 누락 방지
 
 포함 요소:
 ```
@@ -169,6 +191,7 @@ AI의 응답 **형식과 구조**를 정밀하게 설계한다.
 - 표, 목록 등 형식 지정 (필요시)
 - 금지 사항: 포함하면 안 되는 것 (예: 교과서적 요약, 일반론, 빈 추상)
 - 품질 기준(quality bar): 구체적, 조작적, 도메인 특화, 과제 중심
+- Completeness contract: "위 모든 섹션을 빠짐없이 다루어라. 다룰 수 없는 섹션이 있으면 [blocked: 이유]로 명시하라. 섹션을 건너뛰지 말라."
 ```
 
 ### 7단계: Guardrails (안전장치 및 품질 통제)
@@ -179,6 +202,7 @@ AI의 응답 **형식과 구조**를 정밀하게 설계한다.
 - MIT: prompt scaffolding으로 오남용 방지
 - Clinical evidence: 인간 전문가의 검증 가능성 보장
 - Policy analysis: 사실 주장과 분석적 판단의 분리 필수
+- Missing context gating: 정보 부족 시 추측 대신 명시적 처리
 
 내장할 guardrails:
 ```
@@ -189,13 +213,48 @@ AI의 응답 **형식과 구조**를 정밀하게 설계한다.
 5. 품질 기준: "교과서적 요약, 일반론, 빈 추상을 피하라"
 6. 한계 고백: "이 분석의 한계를 명시하라"
 7. 재현성: "같은 프롬프트로 다른 AI가 실행해도 유사한 구조의 결과가 나올 수 있도록"
+8. 정보 부족 처리: "필요한 맥락이나 정보가 부족하면 추측하지 말라. 부족한 정보가 무엇인지 명시하고, 그 부재가 분석에 미치는 영향을 설명하라. 가정을 세워야 할 경우 '[Assumption: ...]'으로 명시적으로 표기하라."
+9. 깊이 강제: "첫 번째 그럴듯한 답에서 멈추지 말라. 2차 효과(second-order effects), 엣지 케이스, 놓치기 쉬운 제약 조건을 반드시 탐색하라."
 ```
+
+### 8단계: Verification Loop (자기검증)
+
+생성된 프롬프트가 **의도한 품질 기준을 충족하는지** 최종 점검한다.
+
+이 단계는 프롬프트를 작성한 뒤, 출력하기 전에 실행하는 **내부 검증 단계**이다.
+
+검증 체크리스트:
+```
+프롬프트를 최종 출력하기 전에, 다음 4가지를 점검하라:
+
+1. Correctness (정확성)
+   - 프롬프트가 0단계에서 추출한 주제, 목적, 도메인을 정확히 반영하는가?
+   - 모든 핵심 질문이 프롬프트 안에서 답변 가능하도록 설계되었는가?
+   - 비질문(Non-questions)이 범위 밖으로 명확히 배제되었는가?
+
+2. Grounding (근거 기반)
+   - Evidence hierarchy가 도메인에 적합하게 조정되었는가?
+   - 인용 규칙이 해당 주제의 출처 유형에 맞는가? (연구 논문 vs 사례 보고서 vs 정책 문서)
+   - 근거 수준 태그가 누락 없이 요구되고 있는가?
+
+3. Completeness (완결성)
+   - 8단계 각각의 산출물이 프롬프트 안에 반영되었는가?
+   - Output contract에 명시된 모든 필수 섹션이 존재하는가?
+   - Guardrails가 해당 도메인의 주요 실패 모드를 커버하는가?
+
+4. Usability (사용성)
+   - 프롬프트를 그대로 복사하여 AI에 붙여넣으면 바로 실행 가능한가?
+   - 불필요한 메타 설명이나 스킬 내부 용어가 프롬프트 안에 남아 있지 않은가?
+   - 프롬프트의 길이가 과도하지 않은가? (핵심이 아닌 지시는 제거)
+```
+
+검증 결과 미달 항목이 있으면, 해당 단계로 돌아가 수정한 뒤 다시 검증한다.
 
 ---
 
 ## 최종 출력
 
-위 7단계를 거쳐 **완성된 프롬프트를 하나의 코드 블록**으로 출력한다.
+위 8단계를 거쳐 **완성된 프롬프트를 하나의 코드 블록**으로 출력한다.
 
 출력 형식:
 ````markdown
@@ -218,6 +277,7 @@ AI의 응답 **형식과 구조**를 정밀하게 설계한다.
 - **근거 위계 조정 사항**: ...
 - **출력 구조 설계 근거**: ...
 - **주요 guardrails**: ...
+- **검증 결과**: 8단계 verification loop 통과 여부 및 조정 사항
 
 ### 사용 팁
 - 이 프롬프트를 더 효과적으로 쓰는 방법 2-3가지
@@ -236,6 +296,7 @@ AI의 응답 **형식과 구조**를 정밀하게 설계한다.
 4. **근거 내장(Evidence-aware)**: 근거의 질을 구분하는 장치 포함
 5. **실패 방지(Failure-resistant)**: 흔한 AI 실패 모드에 대한 guardrails 내장
 6. **재사용 가능(Reusable)**: 유사 과제에 변형하여 재사용 가능한 템플릿 품질
+7. **검증 완료(Verified)**: 8단계 verification loop을 통과한 프롬프트만 출력
 
 ---
 
@@ -283,3 +344,4 @@ target_model: [대상 모델]
 - RAND — Virtual stakeholder deliberation for policy analysis
 - TrialMind / GRADE — Clinical evidence synthesis pipeline
 - 김창준 — EBP 접근법 (근거 기반 실천)
+- OpenAI — Prompt Guidance (output contracts, verification loops, grounding rules, citation rules)
