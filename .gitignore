@@ -1,0 +1,21 @@
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Secrets / credentials
+.env
+.env.*
+*.key
+*.pem
+*.p12
+*.credentials
+*.secret
+
+# IDE / editor
+.idea/
+.vscode/
+*.code-workspace
+
+# OS
+Thumbs.db
