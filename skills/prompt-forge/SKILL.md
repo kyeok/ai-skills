@@ -5,6 +5,7 @@ metadata:
   author: harleykim
   version: "1.0"
   language: ko
+  inspired_by: 고주형
 ---
 
 # /prompt-forge - Expert Prompt Engineer `v1.0`
@@ -277,6 +278,7 @@ target_model: [대상 모델]
 
 ## Credits
 
+- 고주형 — 이 스킬의 영감을 주었습니다
 - MIT Sloan — Prompt templates as cognitive scaffolding
 - RAND — Virtual stakeholder deliberation for policy analysis
 - TrialMind / GRADE — Clinical evidence synthesis pipeline
